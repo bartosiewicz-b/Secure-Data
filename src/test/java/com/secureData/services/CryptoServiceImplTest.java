@@ -36,8 +36,8 @@ class CryptoServiceImplTest {
             IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeySpecException,
             InvalidKeyException {
 
-        byte[] encrypted = cryptoService.encrypt(message, password, salt);
-        char[] decrypted = cryptoService.decrypt(encrypted, password, salt);
+        byte[] encrypted = cryptoService.encrypt(message, password);
+        char[] decrypted = cryptoService.decrypt(encrypted, password);
 
         assertArrayEquals(message, decrypted);
     }

@@ -32,16 +32,8 @@ public class FileCryptoControllerConsole implements FileCryptoController {
         } while(!Arrays.equals(password, confirmPassword));
         Arrays.fill(confirmPassword, '0');
 
-        char[] salt;
-        char[] confirmSalt;
-        do {
-            salt = console.readPassword("Enter salt: ");
-            confirmSalt = console.readPassword("Confirm salt: ");
-        } while(!Arrays.equals(salt, confirmSalt));
-        Arrays.fill(confirmSalt, '0');
-
         try {
-            ioService.save(cryptoService.encrypt(data, password, salt), filename);
+            ioService.save(cryptoService.encrypt(data, password), filename);
 
         } catch (Exception ignored) {
             System.out.println("Error has occurred!");
@@ -49,7 +41,6 @@ public class FileCryptoControllerConsole implements FileCryptoController {
         } finally {
             Arrays.fill(data, '0');
             Arrays.fill(password, '0');
-            Arrays.fill(salt, '0');
         }
     }
 
@@ -58,11 +49,10 @@ public class FileCryptoControllerConsole implements FileCryptoController {
         Console console = System.console();
 
         char[] password = console.readPassword("Enter password: ");
-        char[] salt = console.readPassword("Enter salt: ");
         char[] data = new char[0];
 
         try {
-            data = cryptoService.decrypt(ioService.read(filename), password, salt);
+            data = cryptoService.decrypt(ioService.read(filename), password);
 
             for(char i: data)
                 System.out.print(i);
@@ -77,7 +67,6 @@ public class FileCryptoControllerConsole implements FileCryptoController {
 
         } finally {
             Arrays.fill(password, '0');
-            Arrays.fill(salt, '0');
             Arrays.fill(data, '0');
         }
     }

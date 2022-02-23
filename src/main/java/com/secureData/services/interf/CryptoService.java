@@ -10,11 +10,11 @@ import java.security.spec.InvalidKeySpecException;
 
 public interface CryptoService {
 
-    byte[] encrypt(char[] message, char[] password, char[] salt) throws NoSuchAlgorithmException,
+    byte[] encrypt(char[] data, char[] password) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException;
 
-    char[] decrypt(byte[] message, char[] password, char[] salt) throws NoSuchAlgorithmException,
+    char[] decrypt(byte[] data, char[] password) throws NoSuchAlgorithmException,
             NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException;
 }

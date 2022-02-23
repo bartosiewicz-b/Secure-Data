@@ -16,42 +16,51 @@ import com.secureData.services.interf.CryptoService;
 
 public class CryptoServiceImpl implements CryptoService {
 
-    public byte[] encrypt(char[] message, char[] password, char[] salt) throws NoSuchAlgorithmException,
+    public byte[] encrypt(char[] data, char[] password) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException{
 
+        byte[] salt = randomBytes(16);
+
         SecretKey key = generateKey(password, salt);
-        IvParameterSpec iv = generateIV();
+        IvParameterSpec iv = new IvParameterSpec(randomBytes(16));
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-        byte[] encrypted = cipher.doFinal(charsToBytes(message));
+        byte[] encrypted = cipher.doFinal(charsToBytes(data));
 
-        byte[] res = new byte[16 + encrypted.length];
-        System.arraycopy(iv.getIV(), 0, res, 0, 16);
-        System.arraycopy(encrypted, 0, res, 16, encrypted.length);
+        byte[] res = new byte[32 + encrypted.length];
+        System.arraycopy(salt, 0, res, 0, 16);
+        System.arraycopy(iv.getIV(), 0, res, 16, 16);
+        System.arraycopy(encrypted, 0, res, 32, encrypted.length);
 
         return res;
     }
 
-    public char[] decrypt(byte[] message, char[] password, char[] salt) throws NoSuchAlgorithmException,
+    public char[] decrypt(byte[] data, char[] password) throws NoSuchAlgorithmException,
             NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException {
 
+        byte[] salt = new byte[16];
+        System.arraycopy(data, 0, salt, 0, 16);
+
         SecretKey key = generateKey(password, salt);
-        IvParameterSpec iv = new IvParameterSpec(Arrays.copyOf(message, 16));
+
+        byte[] ivBytes = new byte[16];
+        System.arraycopy(data, 16, ivBytes, 0, 16);
+        IvParameterSpec iv = new IvParameterSpec(ivBytes);
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, key, iv);
 
-        return bytesToChars(cipher.doFinal(Arrays.copyOfRange(message, 16, message.length)));
+        return bytesToChars(cipher.doFinal(Arrays.copyOfRange(data, 32, data.length)));
     }
 
-    private static SecretKey generateKey(char[] password, char[] salt) throws
+    private static SecretKey generateKey(char[] password, byte[] salt) throws
             NoSuchAlgorithmException, InvalidKeySpecException {
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-        KeySpec spec = new PBEKeySpec(password, charsToBytes(salt), 65536, 256);
+        KeySpec spec = new PBEKeySpec(password, salt, 65536, 256);
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
@@ -59,6 +68,12 @@ public class CryptoServiceImpl implements CryptoService {
         byte[] ivBytes = new byte[16];
         new SecureRandom().nextBytes(ivBytes);
         return new IvParameterSpec(ivBytes);
+    }
+
+    private static byte[] randomBytes(int length) {
+        byte[] res = new byte[length];
+        new SecureRandom().nextBytes(res);
+        return res;
     }
 
     private static byte[] charsToBytes(char[] msg) {
