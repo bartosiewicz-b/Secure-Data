@@ -6,6 +6,7 @@ import com.secureData.services.interf.CryptoService;
 import com.secureData.services.interf.IOService;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class FileSaver {
 
@@ -13,16 +14,15 @@ public class FileSaver {
 
     public FileSaver(char[] text) {
         fileChooser = new JFileChooser();
-        fileChooser.showSaveDialog(null);
-
-        new PasswordSetter(text);
+        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION)
+            new PasswordSetter(text);
     }
 
     class PasswordSetter {
 
         public PasswordSetter(char[] text) {
             JFrame frame = new JFrame("Secure Data - Password");
-            frame.setSize(500, 200);
+            frame.setSize(500, 230);
             frame.setLayout(null);
 
             JLabel passwordLabel = new JLabel("Password:");
@@ -41,8 +41,14 @@ public class FileSaver {
             confirmPasswordField.setBounds(100, 100, 300, 20);
             frame.add(confirmPasswordField);
 
+            JLabel passwordNotMatching = new JLabel("The passwords aren't matching!");
+            passwordNotMatching.setBounds(100, 120, 300, 20);
+            passwordNotMatching.setForeground(Color.RED);
+            passwordNotMatching.setVisible(false);
+            frame.add(passwordNotMatching);
+
             JButton submit = new JButton("Submit");
-            submit.setBounds(200, 130, 100, 20);
+            submit.setBounds(200, 160, 100, 20);
             submit.addActionListener(e -> {
                 try {
                     CryptoService cryptoService = new CryptoServiceImpl();
@@ -52,6 +58,8 @@ public class FileSaver {
                         byte[] out = cryptoService.encrypt(text, passwordField.getPassword());
                         ioService.save(out, fileChooser.getSelectedFile().getAbsolutePath());
                         System.exit(0);
+                    } else {
+                        passwordNotMatching.setVisible(true);
                     }
                 } catch (Exception ignored) {
                 }

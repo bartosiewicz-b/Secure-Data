@@ -41,4 +41,12 @@ class CryptoServiceImplTest {
 
         assertArrayEquals(message, decrypted);
     }
+
+    @Test
+    void testPasswordComparison() {
+        char[] pass2 = "pass".toCharArray();
+
+        assertTrue(cryptoService.comparePasswords(password, password));
+        assertFalse(cryptoService.comparePasswords(password, pass2));
+    }
 }

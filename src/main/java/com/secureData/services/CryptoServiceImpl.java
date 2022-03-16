@@ -20,10 +20,10 @@ public class CryptoServiceImpl implements CryptoService {
             NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException,
             IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException{
 
-        byte[] salt = randomBytes(16);
+        byte[] salt = randomBytes();
 
         SecretKey key = generateKey(password, salt);
-        IvParameterSpec iv = new IvParameterSpec(randomBytes(16));
+        IvParameterSpec iv = new IvParameterSpec(randomBytes());
 
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.ENCRYPT_MODE, key, iv);
@@ -74,14 +74,8 @@ public class CryptoServiceImpl implements CryptoService {
         return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
-    private static IvParameterSpec generateIV() {
-        byte[] ivBytes = new byte[16];
-        new SecureRandom().nextBytes(ivBytes);
-        return new IvParameterSpec(ivBytes);
-    }
-
-    private static byte[] randomBytes(int length) {
-        byte[] res = new byte[length];
+    private static byte[] randomBytes() {
+        byte[] res = new byte[16];
         new SecureRandom().nextBytes(res);
         return res;
     }
