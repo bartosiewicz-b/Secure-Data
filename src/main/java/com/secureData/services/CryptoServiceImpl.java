@@ -56,6 +56,16 @@ public class CryptoServiceImpl implements CryptoService {
         return bytesToChars(cipher.doFinal(Arrays.copyOfRange(data, 32, data.length)));
     }
 
+    @Override
+    public boolean comparePasswords(char[] pass1, char[] pass2) {
+        if(pass1.length != pass2.length) return false;
+
+        for (int i = 0; i < pass1.length; i++)
+            if(pass1[i] != pass2[i]) return false;
+
+        return true;
+    }
+
     private static SecretKey generateKey(char[] password, byte[] salt) throws
             NoSuchAlgorithmException, InvalidKeySpecException {
 

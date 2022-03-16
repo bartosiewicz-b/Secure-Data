@@ -17,4 +17,6 @@ public interface CryptoService {
     char[] decrypt(byte[] data, char[] password) throws NoSuchAlgorithmException,
             NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException,
             InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException;
+
+    boolean comparePasswords(char[] pass1, char[] pass2);
 }
