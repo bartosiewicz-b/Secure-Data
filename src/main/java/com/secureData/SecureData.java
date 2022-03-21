@@ -1,7 +1,7 @@
 package com.secureData;
 
-import com.secureData.components.FileOpener;
-import com.secureData.components.NoteWindow;
+import com.secureData.components.EncryptFile;
+import com.secureData.components.MainWindow;
 
 import javax.swing.*;
 
@@ -15,8 +15,8 @@ public class SecureData {
                 null);
 
         switch (type) {
-            case 0 -> new NoteWindow(null);
-            case 1 -> new FileOpener();
+            case 0 -> new MainWindow();
+            case 1 -> new EncryptFile();
         }
     }
 }
