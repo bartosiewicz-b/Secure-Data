@@ -23,10 +23,13 @@ public class MainWindow extends JFrame{
         setLocationRelativeTo(null);
 
         JTextArea textArea = new JTextArea();
-
+        textArea.setLineWrap(true);
         if(input != null) textArea.setText(new String(input));
 
-        add(textArea);
+        JScrollPane scrollPane = new JScrollPane(textArea);
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        add(scrollPane);
 
         JMenuBar menuBar = new JMenuBar();
         JMenu menu = new JMenu("File");
